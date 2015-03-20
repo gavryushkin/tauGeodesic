@@ -52,6 +52,8 @@ public class Main {
                 numberOfTreesPassed=i+1;
             }
 
+            // Add a check that all trees are resolved.
+
             System.out.println("The number of trees passed is " + numberOfTreesPassed + ".\n");
             Date date = new Date();
             System.out.println("The tau-trees have been created on " + date + ". Start computing the mean...\n");
@@ -75,20 +77,21 @@ public class Main {
             //}
 
             //Return the tree closest to the mean:
-            double closest2mean = Geodesic.geodesic(mean,tauTrees[0],0.5).geoLength;
-            TauTree closestTree = tauTrees[0];
+            double distance2mean = Geodesic.geodesic(mean,tauTrees[0],0.5).geoLength;
+            int closestTreeIndex = 0;
             for (int i = 1; i < tauTrees.length; i++) {
-                if (Geodesic.geodesic(mean,tauTrees[i],0.5).geoLength < closest2mean) {
-                    closest2mean = Geodesic.geodesic(mean,tauTrees[i],0.5).geoLength;
-                    closestTree = tauTrees[i];
+                if (Geodesic.geodesic(mean,tauTrees[i],0.5).geoLength < distance2mean) {
+                    distance2mean = Geodesic.geodesic(mean,tauTrees[i],0.5).geoLength;
+                    closestTreeIndex = i;
                 }
             }
-            closestTree.labelMap = tauTrees[0].labelMap;
+            TauTree closestTree = tauTrees[closestTreeIndex];
+            //closestTree.labelMap = tauTrees[0].labelMap;
             Tree closestTreeBeast = TauTree.constructFromTauTree(closestTree);
             System.out.println("The closes tree in the sample to the mean-tree is\n");
             System.out.println(closestTreeBeast.getRoot().toNewick());
             System.out.print("\n");
-            System.out.println("The distance to the mean is" + closest2mean + "./n");
+            System.out.println("The distance to the mean is" + distance2mean + "./n");
         }
     }
 }
