@@ -1,0 +1,96 @@
+                    BEAST v2.1.3 2014
+                 Beast 2 development team 2011-2014
+Version History
+Last updated: April 2014
+
+All issues can be viewed at https://github.com/CompEvol/beast2/issues
+================================================================================
+Version 2.1.3 May 2014
+	Patch release
+	
+	*BEAST template fixed
+
+	add AppStore for conveniently launching applications from packages
+
+	improved FASTA support
+
+	a few small fixes (BEAUti displays of log normal, monophyletic constraint logging, allow import of alignments with same name in BEAUti,etc.)
+
+
+Version 2.1.2 April 2014
+
+	Patch release
+
+	BEAUti handles multiple partitions more conveniently
+
+	improved package management
+
+	fix bug in *BEAST template
+	
+	many small fixes (FASTA support, stochastic distributions, *BEAST operator weighting, etc.)
+
+
+Version 2.1.1 January 2014
+	
+	Patch release speeding up BEAUti to handle large Nexus files and handle multiple files.
+
+
+Version 2.1.0 December 2013
+
+	Support for many more packages, including 
+		o CladeAge for fossil calibrations
+		o Sampled Ancestor Trees
+		o Multi Type Trees for structured coalescent
+		o Birth-Death SIR model
+    If not already available these will be so soon.
+
+	Support for JSON file format
+
+	Beagle update issue resolved -- no more incorrectly calculated likelihoods
+
+	Core refactored, for ease of developing packages
+
+	*BEAST start state for getting faster through burn-in
+
+	BEAUti many small fixes supporting more packages
+
+	DensiTree and TreeAnnotator updated
+
+
+
+Version 2.0.2 February 2013
+
+	Beagle scale issue resolved, resulting in potentially faster 
+	treelikelihood calculations
+
+	Treeannotator and logcombiner updated to version 2
+	
+	BEAUti - use-ambiguities flag in partition panel
+
+	colt and apache math-commons libraries included so not all add-ons
+	need to supply them separately
+
+	Support for path-sampling through beastii add-on
+
+
+
+Version 2.0.c released on 1st December 2011
+
+	New Features:
+	
+    Allows resuming an MCMC chain. Handy when the chain turns out to
+    converge slower than expected.
+
+    Real time tracking of ESSs while running a chain.
+
+    Beauti allows reloading files, so that small changes do not require any
+    XML editing.
+
+    For developers, code is better documented, and only the most relevant
+    classes are part of Beast 2 (i.e. no experimental research code), making
+    it easier to learn.
+
+    Easily extendible: for example, the BeastII add-on supports multi chain
+    MCMC, some experimental likelihood calculations that are potentially
+    faster than the base implementation, and a spread sheet GUI for
+    manipulating models.    
