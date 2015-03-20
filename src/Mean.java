@@ -35,7 +35,6 @@ public class Mean {
         // Find the first mean candidate randomly:
         Random random = new Random();
         int r = random.nextInt(trees.length);
-        //TauTree meanOld = trees[r];
         TauTree meanOld = new TauTree();
         for (TauPartition m : trees[r].tauPartitions) {
             meanOld.addPartition(m);

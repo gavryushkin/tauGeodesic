@@ -52,8 +52,6 @@ public class Main {
                 numberOfTreesPassed=i+1;
             }
 
-            // Add a check that all trees are resolved.
-
             System.out.println("The number of trees passed is " + numberOfTreesPassed + ".\n");
             Date date = new Date();
             System.out.println("The tau-trees have been created on " + date + ". Start computing the mean...\n");
