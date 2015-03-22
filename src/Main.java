@@ -56,14 +56,14 @@ public class Main {
             Date date = new Date();
             System.out.println("The tau-trees have been created on " + date + ". Start computing the mean...\n");
 
-            TauTree mean = Mean.mean(tauTrees, 10000000, 100, 0.000001);
+            TauTree mean = Mean.mean(tauTrees, 10000000, 100, 0.0001);
 
             mean.labelMap = tauTrees[0].labelMap;
 
             Tree meanBeast = TauTree.constructFromTauTree(mean);
 
             System.out.print("\n");
-            System.out.println("The mean tree is\n");
+            System.out.println("Mean tree is\n");
             System.out.println(meanBeast.getRoot().toNewick());
             System.out.print("\n");
 
@@ -74,22 +74,26 @@ public class Main {
             //    System.out.println(dist2mean[i]);
             //}
 
-            //Return the tree closest to the mean:
+            //Return tree closest to mean:
             double distance2mean = Geodesic.geodesic(mean,tauTrees[0],0.5).geoLength;
             int closestTreeIndex = 0;
+            double stdDeviation = distance2mean*distance2mean;
             for (int i = 1; i < tauTrees.length; i++) {
-                if (Geodesic.geodesic(mean,tauTrees[i],0.5).geoLength < distance2mean) {
+                double distCurrent = Geodesic.geodesic(mean,tauTrees[i],0.5).geoLength;
+                stdDeviation = stdDeviation + distCurrent*distCurrent;
+                if (distCurrent < distance2mean) {
                     distance2mean = Geodesic.geodesic(mean,tauTrees[i],0.5).geoLength;
                     closestTreeIndex = i;
                 }
             }
+            stdDeviation = Math.sqrt(stdDeviation/(tauTrees.length - 1));
             TauTree closestTree = tauTrees[closestTreeIndex];
-            //closestTree.labelMap = tauTrees[0].labelMap;
             Tree closestTreeBeast = TauTree.constructFromTauTree(closestTree);
             System.out.println("The closes tree in the sample to the mean-tree is\n");
             System.out.println(closestTreeBeast.getRoot().toNewick());
             System.out.print("\n");
-            System.out.println("The distance to the mean is" + distance2mean + "./n");
+            System.out.println("Distance to mean is " + distance2mean + ".\n");
+            System.out.println("Standard deviation is " + stdDeviation + ".\n");
         }
     }
 }

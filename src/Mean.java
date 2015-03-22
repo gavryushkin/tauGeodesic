@@ -44,7 +44,7 @@ public class Mean {
             int j = random.nextInt(trees.length);
             TauTree meanNew = Geodesic.geodesic(meanOld, trees[j], (double) 1 / (i + 1)).tree;
             double tmpDistance = Geodesic.geodesic(meanOld, meanNew, 0.5).geoLength; // 0.5 here is a random choice. We only need the geo.geoLength.
-            if (i % 100000 == 0 || convergenceCounter >= 50) {
+            if (i % 10000 == 0 || convergenceCounter >= 50) {
                 System.out.println("The test distance is " + tmpDistance + ".");
                 Date date = new Date();
                 System.out.println("The convergence counter is " + convergenceCounter + " on " + date + ".");
