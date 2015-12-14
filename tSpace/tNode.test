@@ -1,0 +1,249 @@
+package tTree;
+/*
+ * Node class, contains an arraylist of taxa included and a double height;
+ * This is code to the part of the tNode class with the current methods for the testing of speeds:
+ *	Different speeds being tested are given in 'modifiedSpeedTree' method
+ *
+*/
+import java.util.*;
+import java.io.*;
+//Consider making the time of tree another part of tNode;
+
+//I think findTimes has the answers for both case0 and case1 together.
+
+public class tNode {
+	ArrayList<String> taxa;
+	double height;
+	
+	public tNode(ArrayList<String> taxa, double height){
+		this.taxa = taxa;
+		this.height = height;		
+	}
+	
+	public void setHeight(double height){
+		this.height = height;
+	}
+	public double getHeight(){
+		return height;
+	}
+	public void setTaxa(ArrayList<String> taxa){
+		this.taxa = taxa;
+	}
+	public ArrayList<String> getTaxa(){
+		return taxa;
+	}
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append(taxa);
+		sb.append(height);
+		return sb.toString();
+	}
+	
+	public static double generate(String[] taxa1, double[] height1,String[] taxa2, double[] height2, double time, 
+			boolean iterate,boolean distances,boolean absSpeed, String filename, int t1Move, int t2Move, int t3Move){
+		ArrayList<tNode> tree1 = new ArrayList<tNode>();
+		ArrayList<tNode> tree2 = new ArrayList<tNode>();		
+		//perhaps start with check if taxa and height are of equal length and also that taxa1 and taxa2 are equal length;
+		//also check how many taxa. -  need at least 2;
+		for(int i = 0; i<taxa1.length; i++){
+			ArrayList<String> s1 = new ArrayList<String>();
+			ArrayList<String> s2 = new ArrayList<String>();
+			s1.add(taxa1[i]);
+			s2.add(taxa2[i]);			
+			tNode node1 = new tNode(s1, height1[i]);
+			tNode node2 = new tNode(s2, height2[i]);
+			tree1.add(node1);
+			tree2.add(node2);			
+		}
+			return findTheWay(tree1, tree2, t1Move, t2Move, t3Move);
+	}
+
+
+//calls modifiedSpeedTree for each topology change
+	//Assumes the 4 taxa tree where (1,2),(1,2,3),(1,2,3,4) -->  (3,4),(3,4,1),(3,4,1,2)
+	//I use ints and cases for the possible speeds of nodes
+	
+	public static double findTheWay(ArrayList<tNode> tree1, ArrayList<tNode> tree2, int t1Move, int t2Move, int t3Move){
+		//System.out.println("The choice of the speeds " + t1Move + " , " + t2Move + " , " + t3Move + " result in the following: ");
+		double distance = 0.0;
+		tree1 = mergeSort(tree1);
+		tree2 = mergeSort(tree2);
+		ArrayList<tNode> speedTree = modifiedSpeedTree(tree1, tree2, t1Move, 0, 4);
+		ArrayList<tNode> tree2Ordered = tree2Ordered(tree1, speedTree);
+		ArrayList<tNode> timeSwapTree = timeSwapTree(tree1, tree2Ordered); //could just send tree1, speedTree - tree2Ordered not really required
+		double minTime = findMinTime(timeSwapTree);
+		ArrayList<tNode> treeStage2 = getTreeAtTime(tree1, speedTree, minTime);
+		distance += findDistance(tree1, treeStage2);
+		//System.out.println("Distance after stage1: " + distance);
+		
+		//Stage2:
+		treeStage2 = mergeSort(treeStage2);
+		speedTree = modifiedSpeedTree(treeStage2, tree2, t1Move, 2, t3Move);
+		tree2Ordered = tree2Ordered(treeStage2, speedTree);
+		timeSwapTree = timeSwapTree(treeStage2, tree2Ordered);
+		minTime = findMinTime(timeSwapTree);
+		ArrayList<tNode> treeStage3 = getTreeAtTime(treeStage2, speedTree, minTime);
+		distance += findDistance(treeStage2, treeStage3);
+		//System.out.println("Distance after stage2: " + distance);
+		
+		//stage3:  //has same speedTree, don't resort, just add another lot of time till next intersection;
+		timeSwapTree = timeSwapTree(treeStage3, tree2Ordered);
+		minTime = findMinTime(timeSwapTree);
+		ArrayList<tNode> treeStage4 = getTreeAtTime(treeStage3, speedTree, minTime);
+		distance += findDistance(treeStage3, treeStage4);
+		//System.out.println("Distance after stage3: " + distance);
+		 //stage4:  only need distance;
+		distance += findDistance(treeStage4, tree2);
+		//System.out.println("Total distance: " + distance);		
+		return distance;
+	}
+	//generate minTime 
+	public static double findMinTime(ArrayList<tNode> timeSwapTree){
+		double minTime = 2.0;
+		for(int i = 0 ; i<timeSwapTree.size(); i++){
+			double nextTime = timeSwapTree.get(i).getHeight();
+			if(nextTime < minTime && nextTime > 0.0){
+				minTime = nextTime;
+			}
+		}		
+		return minTime;
+	}
+	
+	//generate tree2Ordered
+	public static ArrayList<tNode> tree2Ordered(ArrayList<tNode> tree1, ArrayList<tNode> speedTree){
+		ArrayList<tNode> tree2Ordered = new ArrayList<tNode>();
+		for(int i=0; i<tree1.size(); i++){
+			double h = tree1.get(i).getHeight() + speedTree.get(i).getHeight();
+			tree2Ordered.add(new tNode(tree1.get(i).getTaxa(), h));
+		}	
+		return tree2Ordered;
+	}
+	
+	
+	//uses modified speedTree (just for the 3 nodes);
+	public static ArrayList<tNode> modifiedSpeedTree(ArrayList<tNode> tree1, ArrayList<tNode> tree2, int t1Move, int t2Move, int t3Move){
+		ArrayList<tNode> speedTree = new ArrayList<tNode>();
+		double t1Speed = 0, t2Speed = 0, t3Speed = 0;
+		double t1 = tree1.get(1).getHeight();
+		double t2 = tree1.get(2).getHeight();
+		double t3 = tree1.get(3).getHeight();
+		double t1Dash = tree2.get(1).getHeight();
+		double t2Dash = tree2.get(2).getHeight();
+		double t3Dash = tree2.get(3).getHeight();
+		switch (t1Move) {
+		case 0: //t1 -> t3'
+			t1Speed = t3Dash - t1;
+			break;
+		case 1: //t1 -> t2'
+			t1Speed = t2Dash - t1;
+			break;
+		case 2:  //t1 -> t3'+t2'/2
+			t1Speed = ((t3Dash + t2Dash)/2.0) - t1; 
+			break;
+		case 3: //t1 -> absMax(t3'-t1,t2'-t1)
+			if(Math.abs(t3Dash - t1) > Math.abs(t2Dash -t1)){
+				t1Speed = t3Dash - t1;
+			} else {
+				t1Speed = t2Dash - t1;
+			}
+			break;
+		}	
+		
+		switch (t2Move){
+		case 0:  //t2 -> t2; Stage1
+			t2Speed = 0.0;
+			break;
+		case 1: //Stage1
+			//t2Speed = ?
+			break;
+		case 2: //Stage2  t2 -> t1'
+			t2Speed = t1Dash - t2;
+		}
+		
+		switch (t3Move){
+		case 4: //t3 -> t1'; Stage1
+			t3Speed = t1Dash - t3;
+			break;
+			//stage2 : ->
+		case 0: // t3 -> t3'
+			t3Speed = t3Dash - t3;
+			break;
+		case 1: //t3 -> t2'
+			t3Speed = t2Dash - t2;
+			break;
+		case 2: //t3 -> t3'+t2'/2
+			t3Speed = ((t3Dash + t2Dash)/2.0) - t3;
+			break;
+		case 3: //t3 - >  max(abs(t3'-t3),abs(t2'-t3)
+			if(Math.abs(t3Dash - t3) > Math.abs(t2Dash -t3)){
+				t3Speed = t3Dash - t3;
+			} else {
+				t3Speed = t2Dash - t3;
+			}			
+			break;
+		}
+		speedTree.add(new tNode(tree1.get(0).getTaxa(), t1Speed));
+		speedTree.add(new tNode(tree1.get(1).getTaxa(), t1Speed));
+		speedTree.add(new tNode(tree1.get(2).getTaxa(), t2Speed));
+		speedTree.add(new tNode(tree1.get(3).getTaxa(), t3Speed));		
+		
+		return speedTree;
+	}
+	//generates tree of times where nodes meet
+	public static ArrayList<tNode> timeSwapTree(ArrayList<tNode> tree1, ArrayList<tNode> tree2){
+		ArrayList<tNode> timeSwapTree = new ArrayList<tNode>();
+		for(int i = 0; i < tree1.size() -1; i++){
+			double xOri = tree1.get(i).getHeight();
+			double xDest = tree2.get(i).getHeight();
+			for(int j = i + 1; j < tree1.size(); j++){
+				double yOri = tree1.get(j).getHeight();					
+				double yDest = tree2.get(j).getHeight();
+				double timeSwap = (yOri-xOri) / ((xDest - xOri) - (yDest - yOri));
+				timeSwapTree.add(new tNode(tree1.get(i).getTaxa(), timeSwap));	
+			}
+		}
+		return timeSwapTree;
+	}	
+	//generate minTime 
+	public static double findMinTime(ArrayList<tNode> timeSwapTree){
+		double minTime = 2.0;
+		for(int i = 0 ; i<timeSwapTree.size(); i++){
+			double nextTime = timeSwapTree.get(i).getHeight();
+			if(nextTime < minTime && nextTime > 0.0){
+				minTime = nextTime;
+			}
+		}		
+		return minTime;
+	}
+	
+	//generate tree2Ordered
+	public static ArrayList<tNode> tree2Ordered(ArrayList<tNode> tree1, ArrayList<tNode> speedTree){
+		ArrayList<tNode> tree2Ordered = new ArrayList<tNode>();
+		for(int i=0; i<tree1.size(); i++){
+			double h = tree1.get(i).getHeight() + speedTree.get(i).getHeight();
+			tree2Ordered.add(new tNode(tree1.get(i).getTaxa(), h));
+		}	
+		return tree2Ordered;
+	}
+	//finds tree at time t
+		public static ArrayList<tNode> getTreeAtTime(ArrayList<tNode> tree, ArrayList<tNode> speedTree, double time){
+		ArrayList<tNode> treeNext = new ArrayList<tNode>();		
+		for(int i=0; i<tree.size(); i++){
+			double heightnext = tree.get(i).getHeight() + speedTree.get(i).getHeight()*time;
+			treeNext.add(new tNode(tree.get(i).getTaxa(), heightnext ));
+		}
+		return treeNext;
+	}
+	
+	//find distance between 2 trees
+	public static double findDistance(ArrayList<tNode> tree1, ArrayList<tNode> tree2){
+		double distance = 0;
+		tree1 = mergeSort(tree1);
+		tree2 = mergeSort(tree2);
+		for(int i = 1; i<tree1.size(); i++){
+			double dist = (tree1.get(i).getHeight() - tree2.get(i).getHeight());	
+			distance += dist*dist;
+		}
+		return Math.sqrt(distance);
+	}
+	
