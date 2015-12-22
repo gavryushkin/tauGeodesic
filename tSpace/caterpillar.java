@@ -5,6 +5,17 @@ public class caterpillar {
 	public static void main(String[] args) {
 		//Send arrays to make trees, compare trees, output tree along the path at time, time;
 		
+		//for new process:
+		String[] t1Str = {"1","2","3","4"};
+		double[] t1Height = {4,4,7,12};
+		String[] t2Str = {"1","4","3","2"};
+		double[] t2Height = {1,1,3,9};
+		
+		tNode.getTreesAndPath(t1Str, t1Height, t2Str, t2Height);
+		
+		
+		
+		
 		//Things that can be modified
 		String[] t1string = {"1","2","3","4","5"};
 		double[] t1height = {2,2,6,8,10};    
