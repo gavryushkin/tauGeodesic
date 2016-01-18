@@ -112,7 +112,7 @@ public class tNode {
 		System.out.println("Tree1: " + tree1);	
 		System.out.println("TreeB: " + treeB);
 		System.out.println("Tree2: " + tree2);
-		trees.add(convertToNewick(tree1));
+		trees.add(convertToNewick(treeB));
 		//baseCase:
 		if(treesAreEqual(tree1, tree2)){
 			System.out.println("Total Distance:  " + totalDistance);
@@ -129,15 +129,15 @@ public class tNode {
 		mergeSort(treeNext);
 		//compare to tree2 to see if any nodes have stopped
 		double minTimeNodeStop = 10.0;//adjust
-		if(findNodeStop(treeB, tree2, directions) != 10.0){
-			minTimeNodeStop = findNodeStop(treeB, tree2, directions);
+		double nodeStop = findNodeStop(treeB, tree2, directions);
+		if(nodeStop != 10.0){
+			minTimeNodeStop = nodeStop;
 		}
 		double minTimeTopologyAlteration = 10.0;
 		//check for topology changes
-		if(findTopologyAlterations(treeB, treeNext) != 10.0){
-			//find it/them...; --> just want lowest;
-			minTimeTopologyAlteration = findTopologyAlterations(treeB, treeNext);
-			// adjust treeNext to account for this.						
+		double topologyAlteration = findTopologyAlterations(treeB, treeNext);
+		if(topologyAlteration != 10.0){
+			minTimeTopologyAlteration = topologyAlteration;				
 		}
 		double minTime = Math.min(minTimeNodeStop, minTimeTopologyAlteration);
 		System.out.println("minTime: "+ minTime);
