@@ -817,6 +817,7 @@ public class tNode {
 		//if they are in the same:  find direction/max as usual
 		//else and not in crossedRoot, then they need to cross root --> findtotalDistance --> max/direction, dir == +ve
 	
+		//most of the "heights" should really be refered to as "speeds/directions"
 		ArrayList<String> foundTaxa = new ArrayList<String>();
 		double max = 0.0;
 		for(tNode n1: tree1){
@@ -833,7 +834,8 @@ public class tNode {
 							if(crossedRootSpeed > max){
 								max = crossedRootSpeed;
 							}
-							directions.add(new tNode(nextTaxa, 1));	
+							directions.add(new tNode(nextTaxa, crossedRootSpeed));//changed from 1 to the actual speed = crossedRootSpeed	
+							//will need to make sure this intersects with root properly!
 							
 						}else{ //it's in sub1T2 (same)
 							for(tNode n2: tree2){
@@ -842,9 +844,11 @@ public class tNode {
 									if(Math.abs(height) > max){
 										max = Math.abs(height);
 									}
+									/*
 									if(height != 0){
 										height = height/Math.abs(height); //results in either 1 or -1.
-									}									
+									}
+									*/									
 									directions.add(new tNode(nextTaxa, height));
 									break;
 								}
@@ -857,7 +861,7 @@ public class tNode {
 							if(crossedRootSpeed > max){
 								max = crossedRootSpeed;
 							}
-							directions.add(new tNode(nextTaxa, 1));	
+							directions.add(new tNode(nextTaxa, crossedRootSpeed)); //speed adjusted from 1 to CRS as above	
 							
 						}else{ //it's in sub2T2 (same)
 							for(tNode n2: tree2){
@@ -866,9 +870,11 @@ public class tNode {
 									if(Math.abs(height) > max){
 										max = Math.abs(height);
 									}
+									/* standardization removed;
 									if(height != 0){
 										height = height/Math.abs(height); //results in either 1 or -1.
 									}
+									*/
 									directions.add(new tNode(nextTaxa, height));
 									break;
 								}
@@ -884,7 +890,7 @@ public class tNode {
 		root.addAll(tree1.get(tree1.size()-1).getTaxa());
 		directions.add(new tNode(root, 0));
 		for(tNode n : directions){
-			n.setHeight(n.getHeight()*max);
+			n.setHeight(n.getHeight()); //no longer multiply by max, as all roots should have their own speeds not the max speed;
 		}		
 		return directions;
 	}
