@@ -85,16 +85,18 @@ public class tNode {
 					if(Math.abs(height) > max){
 						max = Math.abs(height);
 					}
+					/*
 					if(height != 0){
 						height = height/Math.abs(height); //results in either 1 or -1.
 					}
+					*/
 					directions.add(new tNode(taxa, height));					
 				}
 			}		
 		}
 		//multiply each direction by maxspeed;	
 		for(tNode n : directions){
-			n.setHeight(n.getHeight()*max);
+			n.setHeight(n.getHeight());
 		}
 		
 		return directions;
