@@ -4,7 +4,27 @@ public class caterpillar {
 
 	public static void main(String[] args) {
 		//Send arrays to make trees, compare trees, output tree along the path at time, time;
+		//nf = newickFormat
+		String nfTree1 = "(((A:1.0,B:1.0):3,C:4):1,((D:1,E:1):2,(F:2,G:2):1):2)";		
+		String nfTree2 = "((((A:1,B:1):2,C:3):1,(D:2,E:2):2):1,(F:1,G:1):4)";
 		
+		TreeFromNewick tree1Newick = new TreeFromNewick(nfTree1);
+		ArrayList<tNode> tree1 = tree1Newick.getTree();
+		TreeFromNewick tree2Newick = new TreeFromNewick(nfTree2);
+		ArrayList<tNode> tree2 = tree2Newick.getTree();
+		
+		Map<String, tNode> tree1Map = new HashMap<String, tNode>();
+		Map<String, tNode> tree2Map = new HashMap<String, tNode>();
+		
+		CherryTree cherryTree1 = new CherryTree(tree1, tree1Map);
+		CherryTree cherryTree2 = new CherryTree(tree2, tree2Map);
+		
+		cherryTree1.getSimplifiedTrees(cherryTree2);
+		
+		System.out.println("Final CherryTree1: " + cherryTree1);
+		System.out.println("Final CherryTree2: " + cherryTree2);
+		System.out.println();
+		System.out.println("___________________________________________________________");
 		System.out.println();
 		//The following is for cat2
 		String[] t1LeftStr = {"1","2","3"};
