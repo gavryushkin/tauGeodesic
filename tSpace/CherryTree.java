@@ -1,7 +1,6 @@
 package tTree;
 
 import java.util.*;
-//CherryTree is used to simplify 2 trees
 
 public class CherryTree{
 	ArrayList<tNode> tree;
@@ -35,18 +34,28 @@ public class CherryTree{
 		CherryTree cherryTree1 = this;
 		System.out.println("Initial CherryTree1: " + cherryTree1);
 		System.out.println("Initial CherryTree2: " + cherryTree2);
-		while(canBeSimplified(cherryTree1, cherryTree2)){			
+		boolean cladeHasBeenSimplified = true;
+		while(cladeHasBeenSimplified){
+		while(canBeSimplified(cherryTree1, cherryTree2)){	
 			ArrayList<tNode> commonCherries = cherryTree1.getCommonCherries(cherryTree1, cherryTree2);		
 			cherryTree1 = getSimplifiedTree(cherryTree1, commonCherries);
 			cherryTree2 = getSimplifiedTree(cherryTree2, commonCherries);
 			System.out.println();
 		}		
 		listOfCherryTrees.add(cherryTree1);
-		listOfCherryTrees.add(cherryTree2);		
+		listOfCherryTrees.add(cherryTree2);	
+		RoamingTaxaLocalisation roamer = new RoamingTaxaLocalisation();
+		roamer = roamer.findRoamer(cherryTree1, cherryTree2);
+		cladeHasBeenSimplified = roamer.getHasRoamer();
+		if(cladeHasBeenSimplified){
+			System.out.println("Roaming Taxon is one of: " + roamer.getLocalisedRoamer());
+		}
+		
+		}
 		return listOfCherryTrees;
 	}
 	
-	private CherryTree getSimplifiedTree(CherryTree cherryTree, ArrayList<tNode> commonCherries){	
+	CherryTree getSimplifiedTree(CherryTree cherryTree, ArrayList<tNode> commonCherries){	
 		for(tNode cherry: commonCherries){
 			for(tNode treeNode: cherryTree.getTree()){				
 				if(cherry.getTaxa().equals(treeNode.getTaxa())){
@@ -59,19 +68,18 @@ public class CherryTree{
 					//replace every instance of the cherry in cherryTree with the symbol;
 				}
 			}
-		}
-		
-		return cherryTree;
-		
+		}		
+		return cherryTree;		
 	}
+	
 	private ArrayList<tNode> simplifyTree(CherryTree cherryTree, tNode cherry, ArrayList<String> symbol){
 		ArrayList<String> cherryTaxa = cherry.getTaxa();
 		ArrayList<tNode> replacementTree = new ArrayList<tNode>();
 		for(tNode n: cherryTree.getTree()){
 			ArrayList<String> nodeTaxa = new ArrayList<String>();
 			nodeTaxa.addAll(n.getTaxa());
-			if (n.getTaxa().size() == 1  &&
-					(n.getTaxa().contains(cherryTaxa.get(0)) || n.getTaxa().contains(cherryTaxa.get(1)))){
+			if (n.getTaxa().size() == 1 /* &&
+					(n.getTaxa().contains(cherryTaxa.get(0)) || n.getTaxa().contains(cherryTaxa.get(1)))*/){
 				//don't do anything
 			} else if (n.getTaxa().containsAll(cherryTaxa)){		
 				nodeTaxa.removeAll(cherryTaxa);
@@ -87,8 +95,8 @@ public class CherryTree{
 	
 	private ArrayList<tNode> getCommonCherries(CherryTree tree1, CherryTree tree2){
 		ArrayList<tNode> commonCherries = new ArrayList<tNode>();
-		ArrayList<tNode> tree1Nodes = get2TaxaNodes(tree1);
-		ArrayList<tNode> tree2Nodes = get2TaxaNodes(tree2);
+		ArrayList<tNode> tree1Nodes = getNTaxaNodes(tree1,2);
+		ArrayList<tNode> tree2Nodes = getNTaxaNodes(tree2,2);
 		for(tNode n1: tree1Nodes){
 			ArrayList<String> taxa1 = n1.getTaxa();
 			for(tNode n2: tree2Nodes){
@@ -102,8 +110,8 @@ public class CherryTree{
 	}
 	
 	private boolean canBeSimplified(CherryTree tree1, CherryTree tree2){
-		ArrayList<tNode> tree1Nodes = get2TaxaNodes(tree1);
-		ArrayList<tNode> tree2Nodes = get2TaxaNodes(tree2);
+		ArrayList<tNode> tree1Nodes = getNTaxaNodes(tree1,2);
+		ArrayList<tNode> tree2Nodes = getNTaxaNodes(tree2,2);
 		
 		boolean simple = false;
 		for(int i = 0; i < tree1Nodes.size(); i++){
@@ -117,16 +125,14 @@ public class CherryTree{
 		}	
 		return simple;
 	}
-	private ArrayList<tNode> get2TaxaNodes(CherryTree cherryTree){
+	ArrayList<tNode> getNTaxaNodes(CherryTree cherryTree, int n){
 		ArrayList<tNode> treeNodes = new ArrayList<tNode>();	
 		ArrayList<tNode> tree = cherryTree.getTree();
 		for(int i = 0; i < tree.size(); i++){
-			if(tree.get(i).getTaxa().size() == 2){
+			if(tree.get(i).getTaxa().size() == n){
 				treeNodes.add(tree.get(i));
 			}
-		}				
-		
+		}						
 		return treeNodes;
 	}
-	
 }
