@@ -35,21 +35,22 @@ public class RoamingTaxaLocalisation {
 			for(tNode n2: tree2Taxa2Nodes){
 				ArrayList<String> taxa2 = n2.getTaxa();	
 				int height = 2;
+				Set<String> localisedTaxa = new HashSet<String>();
+				localisedTaxa.addAll(taxa1);
+				localisedTaxa.addAll(taxa2);
 				while(hasOneDifference(taxa1, taxa2)){
 					height++;
 					taxa1 = getNextTaxaList(tree1,taxa1,height);
 					taxa2 = getNextTaxaList(tree2,taxa2,height);				
 				}				
 				if(taxa1.containsAll(taxa2) && taxa1.size() == taxa2.size()){
-					System.out.println(tree1);
-					System.out.println(tree2);
-					Set<String> localisedTaxa = new HashSet<String>();
-					localisedTaxa.addAll(taxa1);
-					localisedTaxa.addAll(taxa2);
+					System.out.println("Pre-Roamer simplification Tree1:  " + tree1);
+					System.out.println("Pre-Roamer simplification Tree2:  " + tree2);					
 					roamer = new RoamingTaxaLocalisation(true, localisedTaxa);
 					simplifyClade(tree1,taxa1);
 					simplifyClade(tree2, taxa2);
-					
+					System.out.println("Post-Roamer simplification Tree1: " + tree1);
+					System.out.println("Post-Roamer simplification Tree2: " + tree2);
 				}	
 				if(roamer.getHasRoamer()){
 					break;
