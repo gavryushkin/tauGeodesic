@@ -40,7 +40,7 @@ public class RoamingTaxaLocalisation {
 					taxa1 = getNextTaxaList(tree1,taxa1,height);
 					taxa2 = getNextTaxaList(tree2,taxa2,height);				
 				}				
-				if(taxa1.equals(taxa2)){
+				if(taxa1.containsAll(taxa2) && taxa1.size() == taxa2.size()){
 					System.out.println(tree1);
 					System.out.println(tree2);
 					Set<String> localisedTaxa = new HashSet<String>();
