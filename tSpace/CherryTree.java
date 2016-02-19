@@ -21,6 +21,7 @@ public class CherryTree{
 	}
 	public ArrayList<tNode> getTree(){
 		return tree;
+		
 	}
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
@@ -41,17 +42,20 @@ public class CherryTree{
 			cherryTree1 = getSimplifiedTree(cherryTree1, commonCherries);
 			cherryTree2 = getSimplifiedTree(cherryTree2, commonCherries);
 			System.out.println();
-		}		
-		listOfCherryTrees.add(cherryTree1);
-		listOfCherryTrees.add(cherryTree2);	
+		}			
 		RoamingTaxaLocalisation roamer = new RoamingTaxaLocalisation();
-		roamer = roamer.findRoamer(cherryTree1, cherryTree2);
+		roamer = roamer.getRoamer(cherryTree1, cherryTree2);
+		System.out.println(cherryTree1);
+		System.out.println(cherryTree2);
 		cladeHasBeenSimplified = roamer.getHasRoamer();
 		if(cladeHasBeenSimplified){
 			System.out.println("Roaming Taxon is one of: " + roamer.getLocalisedRoamer());
 		}
 		
 		}
+
+		listOfCherryTrees.add(cherryTree1);
+		listOfCherryTrees.add(cherryTree2);
 		return listOfCherryTrees;
 	}
 	
@@ -135,4 +139,7 @@ public class CherryTree{
 		}						
 		return treeNodes;
 	}
+	
+
+
 }
