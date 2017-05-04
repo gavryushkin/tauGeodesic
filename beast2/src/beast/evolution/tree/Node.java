@@ -148,6 +148,17 @@ public class Node extends BEASTObject {
     }
 
     /**
+     * @return length of branch between this node and its parent in the beast.tree
+     */
+    public final double getRootLength(double origin) {
+        if (isRoot()) {
+            return origin - height;
+        } else {
+            return getParent().height - height;
+        }
+    }
+
+    /**
      * methods for accessing the dirtiness state of the Node.
      * A Node is Tree.IS_DIRTY if its value (like height) has changed
      * A Node Tree.IS_if FILTHY if its parent or child has changed.
@@ -454,6 +465,40 @@ public class Node extends BEASTObject {
             buf.append(getNewickMetaData());
             buf.append(":").append(getLength());
         }
+        return buf.toString();
+    }
+
+    public String toNewickWithRootBranch(double origin) {
+        final StringBuilder buf = new StringBuilder();
+        if (getLeft() != null) {
+            buf.append("(");
+            buf.append(getLeft().toNewickWithRootBranch(origin));
+//          This is to add multifurcating tree support by Sasha.
+
+            for (Node node:getChildren()) {
+                if (!node.equals(getLeft())) {
+                    buf.append(',');
+                    buf.append(node.toNewickWithRootBranch(origin));
+                }
+
+            }
+//            if (getRight() != null) {                                 //Sasha
+//                buf.append(',');
+//                buf.append(getRight().toNewick(onlyTopology));
+//            }
+            buf.append(")");
+            if (getID() != null) {
+                buf.append(getID());
+            }
+        } else {
+            if (getID() == null) {
+                buf.append(labelNr);
+            } else {
+                buf.append(getID());
+            }
+        }
+        buf.append(getNewickMetaData());
+        buf.append(":").append(getRootLength(origin));
         return buf.toString();
     }
 

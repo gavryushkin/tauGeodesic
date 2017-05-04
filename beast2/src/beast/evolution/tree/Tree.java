@@ -911,4 +911,23 @@ public class Tree extends StateNode implements TreeInterface {
     public TaxonSet getTaxonset() {
         return m_taxonset.get();
     }
+
+    public int changeOrderOfTaxa(Node node, ArrayList<String> taxonOrder) {
+        if (node.isLeaf()) {
+            return taxonOrder.indexOf(node.getID());
+        } else {
+            int left_index = changeOrderOfTaxa(node.getLeft(), taxonOrder);
+            int right_index = changeOrderOfTaxa(node.getRight(), taxonOrder);
+            if (left_index > right_index) {
+                Node left = node.getLeft();
+                Node right = node.getRight();
+                node.setLeft(right);
+                node.setRight(left);
+            }
+            return Math.min(left_index, right_index);
+        }
+
+
+
+    }
 } // class Tree
